@@ -198,15 +198,30 @@
   <p style="margin-top:8px;">Built by a dad, for everyone building something. 🔨</p>
 </footer>
 <script>
-  function handleSignup(inputId,msgId){
-    const email=document.getElementById(inputId).value.trim();
-    if(!email||!email.includes('@')){document.getElementById(inputId).style.borderColor='#e74c3c';setTimeout(()=>document.getElementById(inputId).style.borderColor='',1500);return;}
-    const s=encodeURIComponent('New Daddy Build It Waitlist Signup');
-    const b=encodeURIComponent('New signup: '+email);
-    window.open('mailto:DaddyBuildIt@proton.me?subject='+s+'&body='+b);
-    document.getElementById(inputId).value='';
-    document.getElementById(msgId).style.display='block';
+  function handleSignup(inputId, msgId) {
+  const email = document.getElementById(inputId).value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById(inputId).style.borderColor = '#e74c3c';
+    setTimeout(() => document.getElementById(inputId).style.borderColor = '', 1500);
+    return;
   }
+  fetch('https://api.convertkit.com/v3/forms/9477588/subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: 'kit_f2ea91c4fe94441c14eac599327735a9',
+      email: email
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    document.getElementById(inputId).value = '';
+    document.getElementById(msgId).style.display = 'block';
+  })
+  .catch(() => {
+    alert('Something went wrong. Please try again!');
+  });
+}
   document.getElementById('emailInput').addEventListener('keypress',e=>{if(e.key==='Enter')handleSignup('emailInput','successMsg')});
   document.getElementById('emailInput2').addEventListener('keypress',e=>{if(e.key==='Enter')handleSignup('emailInput2','successMsg2')});
   const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}})},{threshold:.15});
